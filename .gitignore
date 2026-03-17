@@ -1,0 +1,20 @@
+node_modules
+.wrangler
+.dev.vars
+dist
+.env
+*.log
+.DS_Store
+
+# Local D1 database
+.wrangler/state
+
+# Backup files
+*.sql
+backup-*.sql
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
