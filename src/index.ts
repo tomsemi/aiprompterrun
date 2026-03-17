@@ -167,6 +167,9 @@ function generateControlPageHTML() {
     <script>
         let ws;
         let isScrolling = false;
+        let currentRoomCode = '';
+        let reconnectAttempt = 0;
+        let isIntentionallyClosed = false;
         
         window.onload = () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -181,17 +184,34 @@ function generateControlPageHTML() {
             const code = document.getElementById('roomCode').value.trim();
             if (code.length < 1) return alert('Please enter a valid code');
             
+            currentRoomCode = code;
+            isIntentionallyClosed = false;
+            
+            // Show connecting state if it's a reconnect
+            if (reconnectAttempt > 0) {
+                document.getElementById('statusText').innerText = 'Reconnecting...';
+                document.getElementById('statusText').style.color = '#fbbf24'; // warning color
+            }
+            
             const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wsUrl = wsProtocol + '//' + window.location.host + '/ws-room?room=' + code;
+            
+            if (ws) {
+                ws.close();
+            }
             
             ws = new WebSocket(wsUrl);
             
             ws.onopen = () => {
+                reconnectAttempt = 0; // Reset backoff
                 document.getElementById('setup').style.display = 'none';
                 document.getElementById('controls').style.display = 'block';
                 document.getElementById('roomIdHint').innerText = 'Room Code: ' + code;
                 document.getElementById('statusText').innerText = 'Connected';
                 document.getElementById('statusText').style.color = '#4ade80';
+                
+                // Fetch initial status
+                sendCommand('getStatus');
             };
             
             ws.onmessage = (event) => {
@@ -205,8 +225,20 @@ function generateControlPageHTML() {
             };
             
             ws.onclose = () => {
-                document.getElementById('statusText').innerText = 'Disconnected';
+                if (isIntentionallyClosed) return;
+                
+                document.getElementById('statusText').innerText = 'Disconnected. Reconnecting...';
                 document.getElementById('statusText').style.color = '#f87171';
+                
+                // Exponential backoff, max 10s
+                let delay = Math.min(Math.pow(1.5, reconnectAttempt) * 1000, 10000);
+                reconnectAttempt++;
+                
+                setTimeout(() => {
+                    if (!isIntentionallyClosed) {
+                        connect();
+                    }
+                }, delay);
             };
         }
         
