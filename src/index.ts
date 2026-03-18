@@ -5,8 +5,11 @@ interface Env {
 }
 
 export class RoomDurableObject extends DurableObject {
+  hostDeviceId: string | null = null;
+
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
+    this.hostDeviceId = null;
   }
 
   async fetch(request: Request) {
@@ -14,6 +17,21 @@ export class RoomDurableObject extends DurableObject {
     const upgradeHeader = request.headers.get("Upgrade");
     if (!upgradeHeader || upgradeHeader !== "websocket") {
       return new Response("Expected websocket", { status: 400 });
+    }
+
+    const url = new URL(request.url);
+    const deviceId = url.searchParams.get("deviceId");
+
+    if (deviceId) {
+      if (this.hostDeviceId === null) {
+        this.hostDeviceId = deviceId;
+      } else if (this.hostDeviceId !== deviceId) {
+        // Room taken by another device. Reject by accepting then closing immediately with policy violation.
+        const { 0: client, 1: server } = new WebSocketPair();
+        this.ctx.acceptWebSocket(server);
+        server.close(1008, "Collision");
+        return new Response(null, { status: 101, webSocket: client });
+      }
     }
 
     const { 0: client, 1: server } = new WebSocketPair();
@@ -124,8 +142,8 @@ function generateControlPageHTML() {
         <h1>📺 Teleprompter Cloud Remote</h1>
         
         <div id="setup">
-            <p>Enter the 6-digit code shown on the prompter</p>
-            <input type="tel" id="roomCode" maxlength="6" placeholder="e.g. 886622">
+            <p>Enter the 6-character code shown on the prompter</p>
+            <input type="text" id="roomCode" maxlength="6" autocapitalize="characters" style="text-transform:uppercase" placeholder="e.g. A8X9P2">
             <button onclick="connect()">Connect</button>
         </div>
         
@@ -181,7 +199,7 @@ function generateControlPageHTML() {
         };
 
         function connect() {
-            const code = document.getElementById('roomCode').value.trim();
+            const code = document.getElementById('roomCode').value.trim().toUpperCase();
             if (code.length < 1) return alert('Please enter a valid code');
             
             currentRoomCode = code;
