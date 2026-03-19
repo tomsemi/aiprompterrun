@@ -196,39 +196,48 @@ function generateControlPageHTML() {
                 document.getElementById('roomCode').value = roomUrl;
                 connect();
             }
+
+            // [NEW] Trigger reconnect immediately when user comes back to the tab
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') {
+                    if (!ws || ws.readyState !== WebSocket.OPEN) {
+                        console.log('Tab became visible, attempting to reconnect...');
+                        connect();
+                    }
+                }
+            });
         };
 
         function connect() {
-            const code = document.getElementById('roomCode').value.trim().toUpperCase();
+            const codeInput = document.getElementById('roomCode');
+            const code = codeInput.value.trim().toUpperCase();
             if (code.length < 1) return alert('Please enter a valid code');
             
             currentRoomCode = code;
             isIntentionallyClosed = false;
             
-            // Show connecting state if it's a reconnect
-            if (reconnectAttempt > 0) {
-                document.getElementById('statusText').innerText = 'Reconnecting...';
-                document.getElementById('statusText').style.color = '#fbbf24'; // warning color
-            }
+            // Show connecting state
+            document.getElementById('statusText').innerText = 'Connecting...';
+            document.getElementById('statusText').style.color = '#fbbf24';
             
             const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wsUrl = wsProtocol + '//' + window.location.host + '/ws-room?room=' + code;
             
             if (ws) {
+                ws.onclose = null; // Prevent recursion
                 ws.close();
             }
             
             ws = new WebSocket(wsUrl);
             
             ws.onopen = () => {
-                reconnectAttempt = 0; // Reset backoff
+                reconnectAttempt = 0;
                 document.getElementById('setup').style.display = 'none';
                 document.getElementById('controls').style.display = 'block';
                 document.getElementById('roomIdHint').innerText = 'Room Code: ' + code;
                 document.getElementById('statusText').innerText = 'Connected';
                 document.getElementById('statusText').style.color = '#4ade80';
                 
-                // Fetch initial status
                 sendCommand('getStatus');
             };
             
@@ -242,21 +251,25 @@ function generateControlPageHTML() {
                 } catch(e) {}
             };
             
-            ws.onclose = () => {
+            ws.onclose = (e) => {
                 if (isIntentionallyClosed) return;
                 
-                document.getElementById('statusText').innerText = 'Disconnected. Reconnecting...';
+                document.getElementById('statusText').innerText = 'Disconnected (Code: ' + e.code + ')';
                 document.getElementById('statusText').style.color = '#f87171';
                 
-                // Exponential backoff, max 10s
+                // Exponential backoff
                 let delay = Math.min(Math.pow(1.5, reconnectAttempt) * 1000, 10000);
                 reconnectAttempt++;
                 
                 setTimeout(() => {
-                    if (!isIntentionallyClosed) {
+                    if (!isIntentionallyClosed && (!ws || ws.readyState !== WebSocket.OPEN)) {
                         connect();
                     }
                 }, delay);
+            };
+
+            ws.onerror = (err) => {
+                console.error('WebSocket Error:', err);
             };
         }
         
