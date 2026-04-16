@@ -9,7 +9,7 @@ import UseCases from "../components/UseCases.astro";
 import { meta } from "../data/site";
 ---
 
-<BaseLayout title={meta.home.title} description={meta.home.description} path="/">
+<BaseLayout title={meta.home.title} description={meta.home.description} path="/" bodyClass="home-page">
   <main class="site-shell">
     <Hero />
     <FeatureGrid />

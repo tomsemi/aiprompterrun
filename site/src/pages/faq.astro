@@ -3,8 +3,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { faqItems, meta, primaryActions } from "../data/site";
 ---
 
-<BaseLayout title={meta.faq.title} description={meta.faq.description} path="/faq">
-  <main>
+<BaseLayout
+  title={meta.faq.title}
+  description={meta.faq.description}
+  path={meta.faq.path}
+  bodyClass="faq-page"
+>
+  <main class="site-shell">
     <section class="hero">
       <p class="eyebrow">FAQ</p>
       <h1>Everything you need to know before using the app or opening the web remote.</h1>

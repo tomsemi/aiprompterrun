@@ -5,9 +5,10 @@ interface Props {
   title: string;
   description: string;
   path: string;
+  bodyClass?: string;
 }
 
-const { title, description, path } = Astro.props;
+const { title, description, path, bodyClass } = Astro.props;
 const canonical = new URL(path, Astro.site);
 ---
 
@@ -21,7 +22,7 @@ const canonical = new URL(path, Astro.site);
     <link rel="canonical" href={canonical.toString()} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
-  <body>
+  <body class={bodyClass}>
     <slot />
   </body>
 </html>
