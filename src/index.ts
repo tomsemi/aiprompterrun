@@ -1,6 +1,7 @@
 import { DurableObject } from "cloudflare:workers";
 
 interface Env {
+  ASSETS: Fetcher;
   ROOM_DO: DurableObjectNamespace;
 }
 
@@ -71,6 +72,11 @@ export class RoomDurableObject extends DurableObject {
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+    const remoteHost = isRemoteHost(url);
+
+    if (!remoteHost) {
+      return env.ASSETS.fetch(request);
+    }
 
     // REST 或 WebSocket 的分发路由
     if (url.pathname === "/ws-room") {
@@ -98,6 +104,10 @@ export default {
     return new Response("Not found", { status: 404, headers: corsHeaders() });
   },
 };
+
+function isRemoteHost(url: URL) {
+  return url.hostname === "remote.aiprompter.run" || url.hostname.startsWith("remote.");
+}
 
 function corsHeaders() {
   return {

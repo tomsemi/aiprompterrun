@@ -2,4 +2,5 @@
 
 interface Env {
 	ROOM_DO: DurableObjectNamespace<import("./src/index").RoomDurableObject>;
+	ASSETS: Fetcher;
 }
