@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import FeatureGrid from "../components/FeatureGrid.astro";
+import FaqPreview from "../components/FaqPreview.astro";
+import FinalCta from "../components/FinalCta.astro";
+import Hero from "../components/Hero.astro";
+import HowItWorks from "../components/HowItWorks.astro";
+import UseCases from "../components/UseCases.astro";
+import { meta } from "../data/site";
+---
+
+<BaseLayout title={meta.home.title} description={meta.home.description} path="/">
+  <main class="site-shell">
+    <Hero />
+    <FeatureGrid />
+    <HowItWorks />
+    <UseCases />
+    <FaqPreview />
+    <FinalCta />
+  </main>
+</BaseLayout>

@@ -20,4 +20,8 @@ describe("site data", () => {
     expect(meta.home.title.length).toBeGreaterThan(20);
     expect(meta.faq.title.length).toBeGreaterThan(20);
   });
+
+  it("keeps exactly two primary homepage actions", () => {
+    expect(Object.keys(primaryActions)).toEqual(["download", "remote"]);
+  });
 });

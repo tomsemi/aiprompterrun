@@ -1,0 +1,18 @@
+---
+import { steps } from "../data/site";
+---
+
+<section class="panel">
+  <div class="section-heading">
+    <p class="eyebrow">How it works</p>
+    <h2>Three steps from script to remote control.</h2>
+  </div>
+  <ol class="steps">
+    {steps.map((step) => (
+      <li>
+        <h3>{step.title}</h3>
+        <p>{step.body}</p>
+      </li>
+    ))}
+  </ol>
+</section>
