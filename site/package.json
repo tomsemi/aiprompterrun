@@ -1,0 +1,17 @@
+{
+  "name": "aiprompter-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "cross-env ASTRO_TELEMETRY_DISABLED=1 astro dev",
+    "build": "cross-env ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "preview": "cross-env ASTRO_TELEMETRY_DISABLED=1 astro preview",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "astro": "^5.7.0",
+    "cross-env": "^7.0.3",
+    "typescript": "^5.4.5",
+    "vitest": "^2.1.8"
+  }
+}
