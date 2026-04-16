@@ -1,0 +1,27 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+}
+
+const { title, description, path } = Astro.props;
+const canonical = new URL(path, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.toString()} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

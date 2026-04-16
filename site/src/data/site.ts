@@ -14,11 +14,13 @@ export const meta = {
     title: "AIPrompter, a teleprompter app with web remote control",
     description:
       "Use AIPrompter to read scripts smoothly and control your teleprompter from another phone with a simple room code.",
+    path: "/",
   },
   faq: {
     title: "AIPrompter FAQ, setup, room code, and web remote help",
     description:
       "Learn how AIPrompter works, how the room code setup works, and when to use the web remote during recording.",
+    path: "/faq",
   },
 } as const;
 
