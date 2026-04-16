@@ -9,6 +9,8 @@ export const primaryActions = {
   },
 } as const;
 
+export const siteUrl = "https://aiprompter.run";
+
 export const meta = {
   home: {
     title: "AIPrompter, a teleprompter app with web remote control",

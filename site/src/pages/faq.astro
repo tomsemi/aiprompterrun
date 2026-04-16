@@ -1,0 +1,36 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { faqItems, meta, primaryActions } from "../data/site";
+---
+
+<BaseLayout title={meta.faq.title} description={meta.faq.description} path="/faq">
+  <main>
+    <section class="hero">
+      <p class="eyebrow">FAQ</p>
+      <h1>Everything you need to know before using the app or opening the web remote.</h1>
+      <p class="lede">
+        This page covers the room code flow, device setup, and when to use the remote during
+        recording.
+      </p>
+      <div class="hero-actions">
+        <a class="button button-primary" href={primaryActions.download.href}>
+          {primaryActions.download.label}
+        </a>
+        <a class="button button-secondary" href={primaryActions.remote.href}>
+          {primaryActions.remote.label}
+        </a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="faq-list">
+        {faqItems.map((item) => (
+          <article>
+            <h2>{item.question}</h2>
+            <p>{item.answer}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  </main>
+</BaseLayout>
