@@ -5,11 +5,12 @@ import { steps } from "../data/site";
 <section class="panel">
   <div class="section-heading">
     <p class="eyebrow">How it works</p>
-    <h2>Three steps from script to remote control.</h2>
+    <h2>A simple phone-and-remote workflow built for creators.</h2>
   </div>
   <ol class="steps">
-    {steps.map((step) => (
+    {steps.map((step, index) => (
       <li>
+        <span class="step-index">0{index + 1}</span>
         <h3>{step.title}</h3>
         <p>{step.body}</p>
       </li>

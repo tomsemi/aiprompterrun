@@ -12,10 +12,10 @@ import { faqItems, meta, primaryActions } from "../data/site";
   <main class="site-shell">
     <section class="hero">
       <p class="eyebrow">FAQ</p>
-      <h1>Everything you need to know before using the app or opening the web remote.</h1>
+      <h1>Everything you need before turning your phone into a cleaner teleprompter setup.</h1>
       <p class="lede">
-        This page covers the room code flow, device setup, and when to use the remote during
-        recording.
+        This covers the room-code flow, second-device setup, and how the web remote fits into a
+        real recording workflow.
       </p>
       <div class="hero-actions">
         <a class="button button-primary" href={primaryActions.download.href}>
@@ -28,6 +28,10 @@ import { faqItems, meta, primaryActions } from "../data/site";
     </section>
 
     <section class="panel">
+      <div class="section-heading">
+        <p class="eyebrow">Common questions</p>
+        <h2>Setup, workflow, and how the remote fits into your shoot.</h2>
+      </div>
       <div class="faq-list">
         {faqItems.map((item) => (
           <article>

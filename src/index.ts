@@ -72,6 +72,12 @@ export class RoomDurableObject extends DurableObject {
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+    const redirect = redirectWwwHost(url);
+
+    if (redirect) {
+      return Response.redirect(redirect, 301);
+    }
+
     const remoteHost = isRemoteHost(url);
 
     if (!remoteHost) {
@@ -107,6 +113,16 @@ export default {
 
 function isRemoteHost(url: URL) {
   return url.hostname === "remote.aiprompter.run" || url.hostname.startsWith("remote.");
+}
+
+function redirectWwwHost(url: URL) {
+  if (url.hostname !== "www.aiprompter.run") {
+    return null;
+  }
+
+  const target = new URL(url);
+  target.hostname = "aiprompter.run";
+  return target.toString();
 }
 
 function corsHeaders() {

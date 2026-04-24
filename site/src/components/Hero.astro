@@ -3,13 +3,67 @@ import { primaryActions } from "../data/site";
 ---
 
 <section class="hero">
-  <p class="eyebrow">Teleprompter with web remote</p>
-  <h1>Read naturally, record smoothly, and control the prompter from another phone.</h1>
-  <p class="lede">
-    AIPrompter helps creators, presenters, and educators keep their script moving without touching the main device.
-  </p>
-  <div class="hero-actions">
-    <a class="button button-primary" href={primaryActions.download.href}>{primaryActions.download.label}</a>
-    <a class="button button-secondary" href={primaryActions.remote.href}>{primaryActions.remote.label}</a>
+  <div class="hero-copy">
+    <p class="eyebrow">Teleprompter with web remote</p>
+    <h1>Look locked in on camera while another phone runs the prompter.</h1>
+    <p class="lede">
+      AIPrompter turns a simple two-device setup into a cleaner recording workflow. Keep your
+      script moving, adjust speed remotely, and stay focused on delivery instead of controls.
+    </p>
+    <div class="hero-actions">
+      <a class="button button-primary" href={primaryActions.download.href}>
+        {primaryActions.download.label}
+      </a>
+      <a class="button button-secondary" href={primaryActions.remote.href}>
+        {primaryActions.remote.label}
+      </a>
+    </div>
+    <div class="hero-meta">
+      <span>Remote speed control</span>
+      <span>Room-code pairing</span>
+      <span>Built for recording setups</span>
+    </div>
+  </div>
+  <div class="hero-stage">
+    <div class="device-cluster">
+      <div class="device-frame prompter-device">
+        <div class="device-label">PROMPTER DEVICE</div>
+        <div class="device-screen script-screen">
+          <div class="script-line script-line-active"></div>
+          <div class="script-line"></div>
+          <div class="script-line"></div>
+          <div class="script-line script-line-short"></div>
+          <div class="script-controls">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+      </div>
+      <div class="device-frame remote-device">
+        <div class="device-label">REMOTE</div>
+        <div class="device-screen remote-screen">
+          <div class="remote-chip">ROOM E8Z80P</div>
+          <div class="remote-grid">
+            <span>⏪</span>
+            <span>▶</span>
+            <span>⏩</span>
+            <span>🐢</span>
+            <span>🐇</span>
+            <span>↩</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-panel">
+      <div>
+        <strong>Web remote</strong>
+        <p>Use another phone to handle playback without touching the main screen.</p>
+      </div>
+      <div>
+        <strong>Cleaner delivery</strong>
+        <p>Keep eye-line steadier and avoid breaking your shot to change speed or position.</p>
+      </div>
+    </div>
   </div>
 </section>
