@@ -140,80 +140,364 @@ function generateControlPageHTML() {
 <head>
     <meta charset="UTF-8">
     <title>Teleprompter Cloud Remote</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #1a1a2e; color: white; padding: 20px; text-align: center; }
-        .container { max-width: 400px; margin: 0 auto; }
-        h1 { margin-bottom: 30px; font-size: 24px; }
-        p { color: #a1a1aa; margin-bottom: 20px; }
-        #setup { background: rgba(255,255,255,0.05); padding: 30px 20px; border-radius: 16px; margin-top: 50px; }
-        input { padding: 15px; font-size: 24px; text-align: center; border-radius: 12px; border: 1px solid #3f3f46; background: #27272a; color: white; margin-bottom: 20px; width: 100%; letter-spacing: 5px; outline: none; transition: border 0.2s;}
-        input:focus { border-color: #3b82f6; }
-        button { padding: 15px 30px; font-size: 16px; border-radius: 12px; border: none; background: #3b82f6; color: white; cursor: pointer; width: 100%; font-weight: bold; }
-        button:active { background: #2563eb; }
-        .controls { display: none; margin-top: 20px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .btn { background: rgba(255,255,255,0.1); border: none; border-radius: 16px; padding: 18px 10px; color: white; font-size: 15px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px;}
-        .btn:active { background: rgba(255,255,255,0.2); transform: scale(0.98); }
-        .btn.primary { background: #3b82f6; }
-        .btn.primary:active { background: #2563eb; }
-        .btn .icon { font-size: 24px; }
-        .status-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 20px; }
-        .statusText { color: #4ade80; font-weight: bold;}
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            min-height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            background-color: rgb(40, 54, 92);
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            touch-action: manipulation;
+            overscroll-behavior: none;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            border: 0;
+            outline: 0;
+            cursor: pointer;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #setup,
+        #controls {
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        #setup {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+        }
+
+        .setup-inner {
+            width: min(340px, 100%);
+            text-align: center;
+        }
+
+        .setup-title {
+            margin: 0 0 20px;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .setup-hint {
+            margin: 0 0 16px;
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        #roomCode {
+            width: 100%;
+            height: 56px;
+            margin: 0 0 14px;
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.18);
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 5px;
+            text-align: center;
+            text-transform: uppercase;
+            outline: none;
+        }
+
+        #roomCode:focus {
+            border-color: rgb(91, 145, 245);
+        }
+
+        #connectButton {
+            width: 100%;
+            height: 54px;
+            border-radius: 16px;
+            background-color: rgb(91, 145, 245);
+            color: white;
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        #connectButton:active {
+            background-color: rgb(75, 115, 199);
+        }
+
+        #setupStatus {
+            min-height: 20px;
+            margin-top: 12px;
+            color: rgba(255, 255, 255, 0.68);
+            font-size: 13px;
+        }
+
+        #controls {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: max(82px, calc(env(safe-area-inset-top) + 64px)) 12px max(24px, env(safe-area-inset-bottom));
+        }
+
+        .room-header {
+            position: fixed;
+            top: max(14px, env(safe-area-inset-top));
+            left: max(16px, env(safe-area-inset-left));
+            right: max(16px, env(safe-area-inset-right));
+            text-align: center;
+            pointer-events: none;
+        }
+
+        #roomLabel {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        #statusText {
+            margin-top: 4px;
+            color: rgba(255, 255, 255, 0.66);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .button-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn {
+            width: 80px;
+            height: 80px;
+            margin: 10px;
+            padding: 0;
+            border-radius: 20px;
+            background-color: rgb(91, 145, 245);
+            color: white;
+            box-shadow: none;
+            transition: background-color 0.16s ease, transform 0.16s ease;
+        }
+
+        .btn:active {
+            background-color: rgb(75, 115, 199);
+            transform: scale(0.98);
+        }
+
+        .btn .glyph {
+            display: block;
+            font-size: 31px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .btn .glyph-small {
+            font-size: 27px;
+        }
+
+        #floatButton {
+            position: fixed;
+            right: max(18px, env(safe-area-inset-right));
+            bottom: max(18px, env(safe-area-inset-bottom));
+            width: 96px;
+            height: 58px;
+            margin: 0;
+            border-radius: 29px;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        #floatPanelToggle {
+            position: fixed;
+            right: max(124px, calc(env(safe-area-inset-right) + 124px));
+            bottom: max(18px, env(safe-area-inset-bottom));
+            width: 46px;
+            height: 58px;
+            margin: 0;
+            border-radius: 23px;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+        }
+
+        #floatPanel {
+            position: fixed;
+            right: max(18px, env(safe-area-inset-right));
+            bottom: calc(max(18px, env(safe-area-inset-bottom)) + 72px);
+            width: min(280px, calc(100vw - 36px));
+            border-radius: 18px;
+            overflow: hidden;
+            background-color: rgba(255, 255, 255, 0.96);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+            color: rgb(40, 54, 92);
+            display: none;
+        }
+
+        #floatPanel.visible {
+            display: block;
+        }
+
+        .float-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            font-size: 13px;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(40, 54, 92, 0.12);
+        }
+
+        #refreshNotesButton {
+            width: 34px;
+            height: 34px;
+            border-radius: 17px;
+            background-color: rgba(91, 145, 245, 0.12);
+            color: rgb(91, 145, 245);
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .note-item {
+            width: 100%;
+            padding: 11px 12px;
+            border-bottom: 1px solid rgba(40, 54, 92, 0.08);
+            background: transparent;
+            color: rgb(40, 54, 92);
+            text-align: left;
+        }
+
+        .note-item:active {
+            background-color: rgba(91, 145, 245, 0.12);
+        }
+
+        .note-item:last-child {
+            border-bottom: 0;
+        }
+
+        .note-title-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .note-title {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .note-pin {
+            flex: 0 0 auto;
+            color: rgb(255, 159, 67);
+            font-size: 12px;
+        }
+
+        .note-summary {
+            margin-top: 4px;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+            color: rgba(40, 54, 92, 0.68);
+            font-size: 12px;
+            line-height: 1.35;
+        }
+
+        .note-empty {
+            padding: 14px 12px;
+            color: rgba(40, 54, 92, 0.62);
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📺 Teleprompter Cloud Remote</h1>
-        
-        <div id="setup">
-            <p>Enter the 6-character code shown on the prompter</p>
-            <input type="text" id="roomCode" maxlength="6" autocapitalize="characters" style="text-transform:uppercase" placeholder="e.g. A8X9P2">
-            <button onclick="connect()">Connect</button>
+    <form id="setup" autocomplete="off">
+        <div class="setup-inner">
+            <h1 class="setup-title">Teleprompter Remote</h1>
+            <p class="setup-hint">Enter the room code shown on the prompter.</p>
+            <input type="text" id="roomCode" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="A8X9P2">
+            <button id="connectButton" type="submit">Connect</button>
+            <div id="setupStatus"></div>
         </div>
-        
-        <div id="controls" class="controls">
-            <div class="status-box">
-                <div>Status: <span id="statusText" class="statusText">Connected</span></div>
-                <div style="font-size: 13px; color: #a1a1aa; margin-top: 6px;" id="roomIdHint"></div>
+    </form>
+
+    <main id="controls" hidden>
+        <div class="room-header">
+            <div id="roomLabel"></div>
+            <div id="statusText">Connected</div>
+        </div>
+
+        <div class="button-row">
+            <button class="btn" id="resetButton" type="button" aria-label="Reset">
+                <span class="glyph">&#8635;</span>
+            </button>
+            <button class="btn" id="scaleButton" type="button" aria-label="Scale">
+                <span class="glyph">&#9974;</span>
+            </button>
+        </div>
+
+        <div class="button-row">
+            <button class="btn" id="backButton" type="button" aria-label="Back">
+                <span class="glyph glyph-small">&#9664;&#9664;</span>
+            </button>
+            <button class="btn" id="pauseButton" type="button" aria-label="Play or pause">
+                <span class="glyph">&#9654;</span>
+            </button>
+            <button class="btn" id="forwardButton" type="button" aria-label="Forward">
+                <span class="glyph glyph-small">&#9654;&#9654;</span>
+            </button>
+        </div>
+
+        <button class="btn" id="floatButton" type="button">
+            <span>Float</span>
+        </button>
+
+        <button class="btn" id="floatPanelToggle" type="button" aria-label="Scripts">
+            <span class="glyph glyph-small">&#9776;</span>
+        </button>
+
+        <div id="floatPanel">
+            <div class="float-panel-header">
+                <span>Scripts</span>
+                <button id="refreshNotesButton" type="button" aria-label="Refresh scripts">&#8635;</button>
             </div>
-            
-            <div class="grid">
-                <button class="btn" onclick="sendCommand('scrollUp')">
-                    <span class="icon">⏪</span><span>Rewind</span>
-                </button>
-                <button class="btn primary" onclick="sendCommand('play')" id="playBtn">
-                    <span class="icon">▶️</span><span>Play</span>
-                </button>
-                <button class="btn" onclick="sendCommand('scrollDown')">
-                    <span class="icon">⏩</span><span>Forward</span>
-                </button>
-                <button class="btn" onclick="sendCommand('speedDown')">
-                    <span class="icon">🐢</span><span>Slower</span>
-                </button>
-                <button class="btn" onclick="sendCommand('speedUp')">
-                    <span class="icon">🐇</span><span>Faster</span>
-                </button>
-                <button class="btn" onclick="sendCommand('fontDown')">
-                    <span class="icon">A-</span><span>Smaller</span>
-                </button>
-                <button class="btn" onclick="sendCommand('fontUp')">
-                    <span class="icon">A+</span><span>Larger</span>
-                </button>
-                <button class="btn" onclick="sendCommand('reset')" style="grid-column: span 2;">
-                    <span class="icon">↩️</span><span>Reset to Beginning</span>
-                </button>
+            <div id="noteList">
+                <div class="note-empty">Loading...</div>
             </div>
         </div>
-    </div>
+    </main>
     
     <script>
         let ws;
-        let isScrolling = false;
         let currentRoomCode = '';
         let reconnectAttempt = 0;
         let isIntentionallyClosed = false;
+        let remoteNotes = [];
+        let notesRequestToken = 0;
         
         window.onload = () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -223,34 +507,77 @@ function generateControlPageHTML() {
                 connect();
             }
 
-            // [NEW] Trigger reconnect immediately when user comes back to the tab
             document.addEventListener('visibilitychange', () => {
                 if (document.visibilityState === 'visible') {
-                    if (!ws || ws.readyState !== WebSocket.OPEN) {
-                        console.log('Tab became visible, attempting to reconnect...');
+                    if (currentRoomCode && (!ws || ws.readyState !== WebSocket.OPEN)) {
                         connect();
                     }
                 }
             });
+
+            document.addEventListener('dblclick', event => {
+                event.preventDefault();
+            }, { passive: false });
+
+            ['gesturestart', 'gesturechange', 'gestureend'].forEach(eventName => {
+                document.addEventListener(eventName, event => {
+                    event.preventDefault();
+                }, { passive: false });
+            });
+
+            document.getElementById('setup').addEventListener('submit', event => {
+                event.preventDefault();
+                connect();
+            });
+
+            bindButton('forwardButton', () => sendCommand('forward'));
+            bindButton('backButton', () => sendCommand('back'));
+            bindButton('pauseButton', () => sendCommand('playpause'));
+            bindButton('resetButton', () => sendCommand('reset'));
+            bindButton('scaleButton', () => sendCommand('scale'));
+            bindButton('floatButton', () => floatNote(remoteNotes[0]));
+            bindButton('refreshNotesButton', requestNotes);
+            bindButton('floatPanelToggle', () => {
+                const panel = document.getElementById('floatPanel');
+                panel.classList.toggle('visible');
+                if (panel.classList.contains('visible')) {
+                    requestNotes();
+                }
+            });
         };
+
+        function bindButton(id, handler) {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('click', handler);
+        }
+
+        function setSetupStatus(text) {
+            document.getElementById('setupStatus').innerText = text || '';
+        }
+
+        function setControlStatus(text) {
+            document.getElementById('statusText').innerText = text || '';
+        }
 
         function connect() {
             const codeInput = document.getElementById('roomCode');
             const code = codeInput.value.trim().toUpperCase();
-            if (code.length < 1) return alert('Please enter a valid code');
+            if (code.length < 1) {
+                setSetupStatus('Enter a valid room code.');
+                return;
+            }
             
             currentRoomCode = code;
             isIntentionallyClosed = false;
-            
-            // Show connecting state
-            document.getElementById('statusText').innerText = 'Connecting...';
-            document.getElementById('statusText').style.color = '#fbbf24';
+            document.getElementById('roomLabel').innerText = 'Room ' + code;
+            setSetupStatus('Connecting...');
+            setControlStatus('Connecting...');
             
             const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wsUrl = wsProtocol + '//' + window.location.host + '/ws-room?room=' + code;
             
             if (ws) {
-                ws.onclose = null; // Prevent recursion
+                ws.onclose = null;
                 ws.close();
             }
             
@@ -258,21 +585,24 @@ function generateControlPageHTML() {
             
             ws.onopen = () => {
                 reconnectAttempt = 0;
-                document.getElementById('setup').style.display = 'none';
-                document.getElementById('controls').style.display = 'block';
-                document.getElementById('roomIdHint').innerText = 'Room Code: ' + code;
-                document.getElementById('statusText').innerText = 'Connected';
-                document.getElementById('statusText').style.color = '#4ade80';
-                
-                sendCommand('getStatus');
+                document.getElementById('setup').hidden = true;
+                document.getElementById('controls').hidden = false;
+                setSetupStatus('');
+                setControlStatus('Connected');
+                requestNotes();
             };
             
             ws.onmessage = (event) => {
                 try {
                     const msg = JSON.parse(event.data);
+                    if (msg.type === 'notesResponse') {
+                        remoteNotes = Array.isArray(msg.notes) ? msg.notes : [];
+                        renderNotes(remoteNotes);
+                        return;
+                    }
+
                     if (msg.type === 'status' && msg.data) {
-                        isScrolling = msg.data.isScrolling;
-                        updatePlayButton();
+                        setControlStatus(msg.data.isConnected === false ? 'Disconnected' : 'Connected');
                     }
                 } catch(e) {}
             };
@@ -280,10 +610,9 @@ function generateControlPageHTML() {
             ws.onclose = (e) => {
                 if (isIntentionallyClosed) return;
                 
-                document.getElementById('statusText').innerText = 'Disconnected (Code: ' + e.code + ')';
-                document.getElementById('statusText').style.color = '#f87171';
+                setSetupStatus('Disconnected. Reconnecting...');
+                setControlStatus('Disconnected. Reconnecting...');
                 
-                // Exponential backoff
                 let delay = Math.min(Math.pow(1.5, reconnectAttempt) * 1000, 10000);
                 reconnectAttempt++;
                 
@@ -298,27 +627,89 @@ function generateControlPageHTML() {
                 console.error('WebSocket Error:', err);
             };
         }
-        
-        function updatePlayButton() {
-            const btn = document.getElementById('playBtn');
-            if (isScrolling) {
-                btn.innerHTML = '<span class="icon">⏸️</span><span>Pause</span>';
-            } else {
-                btn.innerHTML = '<span class="icon">▶️</span><span>Play</span>';
+
+        function sendPayload(payload) {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                setControlStatus('Reconnecting...');
+                if (currentRoomCode) connect();
+                return false;
             }
+            
+            ws.send(JSON.stringify(payload));
+            return true;
         }
-        
-        function sendCommand(cmd) {
-            if (!ws || ws.readyState !== WebSocket.OPEN) return;
-            
-            let action = cmd;
-            if (cmd === 'play') {
-                action = isScrolling ? 'pause' : 'play';
-                isScrolling = !isScrolling; 
-                updatePlayButton();
+
+        function sendCommand(action, params) {
+            const payload = { type: 'command', action: action };
+            if (params) {
+                Object.keys(params).forEach(key => {
+                    payload[key] = params[key];
+                });
             }
-            
-            ws.send(JSON.stringify({ type: 'command', action: action }));
+            sendPayload(payload);
+        }
+
+        function requestNotes() {
+            const token = ++notesRequestToken;
+            renderNotes(null);
+            if (!sendPayload({ type: 'notesRequest' })) return;
+
+            setTimeout(() => {
+                if (token === notesRequestToken) {
+                    renderNotes(remoteNotes);
+                }
+            }, 4000);
+        }
+
+        function floatNote(note) {
+            if (note && note.id !== undefined && note.id !== null) {
+                sendCommand('floatNote', { noteID: note.id });
+                return;
+            }
+            sendCommand('floatDefault');
+        }
+
+        function escapeText(value) {
+            return String(value || '').replace(/[&<>"']/g, character => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            })[character]);
+        }
+
+        function renderNotes(notes) {
+            const list = document.getElementById('noteList');
+            if (!list) return;
+
+            if (notes === null) {
+                list.innerHTML = '<div class="note-empty">Loading...</div>';
+                return;
+            }
+
+            if (!notes || notes.length === 0) {
+                list.innerHTML = '<div class="note-empty">No scripts</div>';
+                return;
+            }
+
+            list.innerHTML = notes.map(note => {
+                const pin = note.pinned ? '<span class="note-pin">&#9679;</span>' : '';
+                const title = escapeText(note.title || 'Untitled');
+                const summary = escapeText(note.summary || '');
+                return '<button class="note-item" type="button" data-id="' + escapeText(note.id) + '">' +
+                    '<div class="note-title-row">' + pin + '<span class="note-title">' + title + '</span></div>' +
+                    '<div class="note-summary">' + summary + '</div>' +
+                    '</button>';
+            }).join('');
+
+            Array.prototype.forEach.call(list.querySelectorAll('.note-item'), item => {
+                item.addEventListener('click', function () {
+                    const noteID = this.getAttribute('data-id');
+                    const note = remoteNotes.find(candidate => String(candidate.id) === String(noteID));
+                    floatNote(note);
+                });
+            });
         }
     </script>
 </body>
