@@ -273,6 +273,7 @@ function generateControlPageHTML() {
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: clamp(16px, 4vmin, 26px);
             padding: max(82px, calc(env(safe-area-inset-top) + 64px)) 12px max(100px, calc(env(safe-area-inset-bottom) + 88px));
         }
 
@@ -302,7 +303,7 @@ function generateControlPageHTML() {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: clamp(14px, 4vw, 22px);
         }
 
         .btn {
@@ -502,6 +503,11 @@ function generateControlPageHTML() {
 
             #floatPanel {
                 width: min(260px, calc(100vw - 24px));
+            }
+
+            #controls {
+                gap: 12px;
+                padding: max(56px, calc(env(safe-area-inset-top) + 38px)) 10px max(72px, calc(env(safe-area-inset-bottom) + 62px));
             }
 
             .button-row {
