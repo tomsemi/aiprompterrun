@@ -576,6 +576,11 @@ function generateControlPageHTML() {
         let reconnectAttempt = 0;
         let isIntentionallyClosed = false;
         let remoteNotes = [];
+        let autoFloatAfterScanSupported = false;
+        let autoFloatAfterScanEnabled = false;
+        let isPictureInPictureActive = false;
+        let canStartPictureInPictureNow = true;
+        let autoFloatTriggered = false;
         let notesRequestToken = 0;
         let commandRequestToken = 0;
         let currentToastTimer = null;
@@ -593,6 +598,8 @@ function generateControlPageHTML() {
                 if (document.visibilityState === 'visible') {
                     if (currentRoomCode && (!ws || ws.readyState !== WebSocket.OPEN)) {
                         connect();
+                    } else {
+                        autoFloatLatestNoteIfNeeded();
                     }
                 }
             });
@@ -764,7 +771,12 @@ function generateControlPageHTML() {
                     const msg = JSON.parse(event.data);
                     if (msg.type === 'notesResponse') {
                         remoteNotes = Array.isArray(msg.notes) ? msg.notes : [];
+                        isPictureInPictureActive = msg.pipActive === true;
+                        canStartPictureInPictureNow = msg.canStartPiP !== false;
+                        autoFloatAfterScanSupported = typeof msg.autoFloatAfterScanEnabled === 'boolean';
+                        autoFloatAfterScanEnabled = msg.autoFloatAfterScanEnabled === true;
                         renderNotes(remoteNotes);
+                        autoFloatLatestNoteIfNeeded();
                         return;
                     }
 
@@ -844,6 +856,34 @@ function generateControlPageHTML() {
                     renderNotes(remoteNotes);
                 }
             }, 4000);
+        }
+
+        function autoFloatLatestNoteIfNeeded() {
+            if (autoFloatTriggered || !autoFloatAfterScanSupported || !autoFloatAfterScanEnabled) {
+                return;
+            }
+
+            if (!remoteNotes || remoteNotes.length === 0) {
+                return;
+            }
+
+            if (isPictureInPictureActive) {
+                autoFloatTriggered = true;
+                return;
+            }
+
+            if (document.visibilityState !== 'visible') {
+                return;
+            }
+
+            if (!canStartPictureInPictureNow) {
+                autoFloatTriggered = true;
+                showToast('Keep the app in the foreground to start floating.');
+                return;
+            }
+
+            autoFloatTriggered = true;
+            sendCommand('floatDefault', { source: 'auto' }, null);
         }
 
         function floatNote(note, button) {
