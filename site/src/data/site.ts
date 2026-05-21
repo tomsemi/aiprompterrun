@@ -1,7 +1,7 @@
 export const primaryActions = {
   download: {
     label: "Download App",
-    href: "https://apps.apple.com/",
+    href: "https://apps.apple.com/app/id1561831359",
   },
   remote: {
     label: "Open Web Remote",

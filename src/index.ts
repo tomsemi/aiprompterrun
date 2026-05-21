@@ -146,19 +146,36 @@ function generateControlPageHTML() {
             box-sizing: border-box;
         }
 
+        :root {
+            --page-bg: rgb(40, 54, 92);
+            --control-blue: rgb(91, 145, 245);
+            --control-blue-active: rgb(75, 115, 199);
+            --control-button-size: 80px;
+            --bottom-action-height: 58px;
+        }
+
         html,
         body {
             margin: 0;
             min-height: 100vh;
             width: 100%;
             overflow: hidden;
-            background-color: rgb(40, 54, 92);
+            background-color: var(--page-bg);
             color: white;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             touch-action: manipulation;
             overscroll-behavior: none;
             -webkit-text-size-adjust: 100%;
             -webkit-tap-highlight-color: transparent;
+        }
+
+        @supports (height: 100dvh) {
+            html,
+            body,
+            #setup,
+            #controls {
+                min-height: 100dvh;
+            }
         }
 
         [hidden] {
@@ -256,7 +273,7 @@ function generateControlPageHTML() {
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: max(82px, calc(env(safe-area-inset-top) + 64px)) 12px max(24px, env(safe-area-inset-bottom));
+            padding: max(82px, calc(env(safe-area-inset-top) + 64px)) 12px max(100px, calc(env(safe-area-inset-bottom) + 88px));
         }
 
         .room-header {
@@ -285,22 +302,29 @@ function generateControlPageHTML() {
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 12px;
         }
 
         .btn {
-            width: 80px;
-            height: 80px;
-            margin: 10px;
+            width: var(--control-button-size);
+            height: var(--control-button-size);
+            margin: 0;
             padding: 0;
             border-radius: 20px;
-            background-color: rgb(91, 145, 245);
+            background-color: var(--control-blue);
             color: white;
             box-shadow: none;
-            transition: background-color 0.16s ease, transform 0.16s ease;
+            transition: background-color 0.16s ease, transform 0.16s ease, opacity 0.16s ease;
+        }
+
+        .btn:disabled,
+        .btn.is-pending {
+            opacity: 0.68;
+            pointer-events: none;
         }
 
         .btn:active {
-            background-color: rgb(75, 115, 199);
+            background-color: var(--control-blue-active);
             transform: scale(0.98);
         }
 
@@ -315,12 +339,19 @@ function generateControlPageHTML() {
             font-size: 27px;
         }
 
-        #floatButton {
+        .floating-actions {
             position: fixed;
-            right: max(18px, env(safe-area-inset-right));
-            bottom: max(18px, env(safe-area-inset-bottom));
+            right: calc(env(safe-area-inset-right) + 18px);
+            bottom: calc(env(safe-area-inset-bottom) + 18px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 15;
+        }
+
+        #floatButton {
             width: 96px;
-            height: 58px;
+            height: var(--bottom-action-height);
             margin: 0;
             border-radius: 29px;
             box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
@@ -329,11 +360,8 @@ function generateControlPageHTML() {
         }
 
         #floatPanelToggle {
-            position: fixed;
-            right: max(124px, calc(env(safe-area-inset-right) + 124px));
-            bottom: max(18px, env(safe-area-inset-bottom));
             width: 46px;
-            height: 58px;
+            height: var(--bottom-action-height);
             margin: 0;
             border-radius: 23px;
             box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
@@ -341,8 +369,8 @@ function generateControlPageHTML() {
 
         #floatPanel {
             position: fixed;
-            right: max(18px, env(safe-area-inset-right));
-            bottom: calc(max(18px, env(safe-area-inset-bottom)) + 72px);
+            right: calc(env(safe-area-inset-right) + 18px);
+            bottom: calc(env(safe-area-inset-bottom) + 88px);
             width: min(280px, calc(100vw - 36px));
             border-radius: 18px;
             overflow: hidden;
@@ -432,6 +460,54 @@ function generateControlPageHTML() {
             color: rgba(40, 54, 92, 0.62);
             font-size: 13px;
         }
+
+        .status-toast {
+            position: fixed;
+            left: 50%;
+            bottom: calc(env(safe-area-inset-bottom) + 88px);
+            transform: translateX(-50%) translateY(10px);
+            max-width: calc(100vw - 40px);
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(20, 24, 36, 0.88);
+            color: white;
+            font-size: 13px;
+            line-height: 1.2;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.18s ease, transform 0.18s ease;
+            pointer-events: none;
+            z-index: 30;
+        }
+
+        .status-toast.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 350px), (max-height: 500px) and (orientation: landscape) {
+            :root {
+                --control-button-size: 72px;
+                --bottom-action-height: 52px;
+            }
+
+            #floatButton {
+                width: 88px;
+                font-size: 14px;
+            }
+
+            #floatPanelToggle {
+                width: 42px;
+            }
+
+            #floatPanel {
+                width: min(260px, calc(100vw - 24px));
+            }
+
+            .button-row {
+                gap: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -472,14 +548,6 @@ function generateControlPageHTML() {
             </button>
         </div>
 
-        <button class="btn" id="floatButton" type="button">
-            <span>Float</span>
-        </button>
-
-        <button class="btn" id="floatPanelToggle" type="button" aria-label="Scripts">
-            <span class="glyph glyph-small">&#9776;</span>
-        </button>
-
         <div id="floatPanel">
             <div class="float-panel-header">
                 <span>Scripts</span>
@@ -490,6 +558,17 @@ function generateControlPageHTML() {
             </div>
         </div>
     </main>
+
+    <div class="floating-actions" hidden id="floatingActions">
+        <button class="btn" id="floatPanelToggle" type="button" aria-label="Scripts">
+            <span class="glyph glyph-small">&#9776;</span>
+        </button>
+        <button class="btn" id="floatButton" type="button">
+            <span>Float</span>
+        </button>
+    </div>
+
+    <div id="statusToast" class="status-toast" aria-live="polite"></div>
     
     <script>
         let ws;
@@ -498,6 +577,9 @@ function generateControlPageHTML() {
         let isIntentionallyClosed = false;
         let remoteNotes = [];
         let notesRequestToken = 0;
+        let commandRequestToken = 0;
+        let currentToastTimer = null;
+        const pendingCommands = new Map();
         
         window.onload = () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -530,12 +612,12 @@ function generateControlPageHTML() {
                 connect();
             });
 
-            bindButton('forwardButton', () => sendCommand('forward'));
-            bindButton('backButton', () => sendCommand('back'));
-            bindButton('pauseButton', () => sendCommand('playpause'));
-            bindButton('resetButton', () => sendCommand('reset'));
-            bindButton('scaleButton', () => sendCommand('scale'));
-            bindButton('floatButton', () => floatNote(remoteNotes[0]));
+            bindButton('forwardButton', button => sendCommand('forward', null, button));
+            bindButton('backButton', button => sendCommand('back', null, button));
+            bindButton('pauseButton', button => sendCommand('playpause', null, button));
+            bindButton('resetButton', button => sendCommand('reset', null, button));
+            bindButton('scaleButton', button => sendCommand('scale', null, button));
+            bindButton('floatButton', button => floatNote(remoteNotes[0], button));
             bindButton('refreshNotesButton', requestNotes);
             bindButton('floatPanelToggle', () => {
                 const panel = document.getElementById('floatPanel');
@@ -548,7 +630,9 @@ function generateControlPageHTML() {
 
         function bindButton(id, handler) {
             const el = document.getElementById(id);
-            if (el) el.addEventListener('click', handler);
+            if (el) {
+                el.addEventListener('click', () => handler(el));
+            }
         }
 
         function setSetupStatus(text) {
@@ -557,6 +641,88 @@ function generateControlPageHTML() {
 
         function setControlStatus(text) {
             document.getElementById('statusText').innerText = text || '';
+        }
+
+        function setFloatingActionsHidden(hidden) {
+            const actions = document.getElementById('floatingActions');
+            if (actions) {
+                actions.hidden = hidden;
+            }
+        }
+
+        function setButtonPending(button, pending) {
+            if (!button) return;
+            button.disabled = pending;
+            button.classList.toggle('is-pending', pending);
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('statusToast');
+            if (!toast) return;
+
+            toast.innerText = message || '';
+            if (!message) {
+                toast.classList.remove('visible');
+                return;
+            }
+
+            toast.classList.add('visible');
+            if (currentToastTimer) {
+                clearTimeout(currentToastTimer);
+            }
+            currentToastTimer = window.setTimeout(() => {
+                toast.classList.remove('visible');
+            }, 1800);
+        }
+
+        function nextRequestId(action) {
+            commandRequestToken += 1;
+            return action + '-' + Date.now().toString(36) + '-' + commandRequestToken.toString(36);
+        }
+
+        function clearPendingCommand(requestId, message) {
+            const entry = pendingCommands.get(requestId);
+            if (!entry) return;
+
+            pendingCommands.delete(requestId);
+            if (entry.timeoutId) {
+                clearTimeout(entry.timeoutId);
+            }
+            setButtonPending(entry.button, false);
+            if (message) {
+                showToast(message);
+            }
+        }
+
+        function clearAllPendingCommands(message) {
+            Array.from(pendingCommands.keys()).forEach(requestId => {
+                clearPendingCommand(requestId, '');
+            });
+            if (message) {
+                showToast(message);
+            }
+        }
+
+        function commandMessage(result) {
+            switch (result) {
+                case 'needsForeground':
+                    return 'Keep the app in the foreground to start floating.';
+                case 'alreadyActive':
+                    return 'Floating is already active.';
+                case 'noContent':
+                    return 'No scripts.';
+                case 'invalidAction':
+                    return 'Connection failed.';
+                default:
+                    return '';
+            }
+        }
+
+        function handleCommandResponse(msg) {
+            if (!msg || !msg.requestId) return;
+
+            const message = msg.message || commandMessage(msg.result);
+            clearPendingCommand(msg.requestId, message);
         }
 
         function connect() {
@@ -587,6 +753,7 @@ function generateControlPageHTML() {
                 reconnectAttempt = 0;
                 document.getElementById('setup').hidden = true;
                 document.getElementById('controls').hidden = false;
+                setFloatingActionsHidden(false);
                 setSetupStatus('');
                 setControlStatus('Connected');
                 requestNotes();
@@ -601,6 +768,11 @@ function generateControlPageHTML() {
                         return;
                     }
 
+                    if (msg.type === 'commandResponse') {
+                        handleCommandResponse(msg);
+                        return;
+                    }
+
                     if (msg.type === 'status' && msg.data) {
                         setControlStatus(msg.data.isConnected === false ? 'Disconnected' : 'Connected');
                     }
@@ -610,6 +782,8 @@ function generateControlPageHTML() {
             ws.onclose = (e) => {
                 if (isIntentionallyClosed) return;
                 
+                clearAllPendingCommands('Connection lost.');
+                setFloatingActionsHidden(true);
                 setSetupStatus('Disconnected. Reconnecting...');
                 setControlStatus('Disconnected. Reconnecting...');
                 
@@ -639,14 +813,25 @@ function generateControlPageHTML() {
             return true;
         }
 
-        function sendCommand(action, params) {
-            const payload = { type: 'command', action: action };
+        function sendCommand(action, params, button) {
+            const requestId = nextRequestId(action);
+            const payload = { type: 'command', action: action, requestId: requestId };
             if (params) {
                 Object.keys(params).forEach(key => {
                     payload[key] = params[key];
                 });
             }
-            sendPayload(payload);
+
+            if (!sendPayload(payload)) {
+                return;
+            }
+
+            const timeoutId = window.setTimeout(() => {
+                clearPendingCommand(requestId, 'Request timed out.');
+            }, 4500);
+
+            pendingCommands.set(requestId, { button: button || null, timeoutId: timeoutId });
+            setButtonPending(button, true);
         }
 
         function requestNotes() {
@@ -661,12 +846,12 @@ function generateControlPageHTML() {
             }, 4000);
         }
 
-        function floatNote(note) {
+        function floatNote(note, button) {
             if (note && note.id !== undefined && note.id !== null) {
-                sendCommand('floatNote', { noteID: note.id });
+                sendCommand('floatNote', { noteID: note.id }, button);
                 return;
             }
-            sendCommand('floatDefault');
+            sendCommand('floatDefault', null, button);
         }
 
         function escapeText(value) {
@@ -707,7 +892,7 @@ function generateControlPageHTML() {
                 item.addEventListener('click', function () {
                     const noteID = this.getAttribute('data-id');
                     const note = remoteNotes.find(candidate => String(candidate.id) === String(noteID));
-                    floatNote(note);
+                    floatNote(note, this);
                 });
             });
         }

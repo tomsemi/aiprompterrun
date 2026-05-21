@@ -2,6 +2,10 @@ import { describe, expect, it } from "vitest";
 import { faqItems, meta, primaryActions, steps } from "./site";
 
 describe("site data", () => {
+  it("points the download CTA at the App Store listing", () => {
+    expect(primaryActions.download.href).toBe("https://apps.apple.com/app/id1561831359");
+  });
+
   it("keeps the remote CTA pointed at the existing remote domain", () => {
     expect(primaryActions.remote.href).toBe("https://remote.aiprompter.run/");
   });
