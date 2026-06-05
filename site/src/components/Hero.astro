@@ -4,11 +4,11 @@ import { primaryActions } from "../data/site";
 
 <section class="hero">
   <div class="hero-copy">
-    <p class="eyebrow">Teleprompter with web remote</p>
-    <h1>Look locked in on camera while another phone runs the prompter.</h1>
+    <p class="eyebrow">Floating teleprompter above apps</p>
+    <h1>Read your script while the camera app stays open.</h1>
     <p class="lede">
-      AIPrompter turns a simple two-device setup into a cleaner recording workflow. Keep your
-      script moving, adjust speed remotely, and stay focused on delivery instead of controls.
+      AIPrompter keeps your words floating over recording, livestream, and meeting apps so you
+      can stay on lens, keep pace, and record without switching screens.
     </p>
     <div class="hero-actions">
       <a class="button button-primary" href={primaryActions.download.href}>
@@ -19,24 +19,30 @@ import { primaryActions } from "../data/site";
       </a>
     </div>
     <div class="hero-meta">
-      <span>Remote speed control</span>
-      <span>Room-code pairing</span>
-      <span>Built for recording setups</span>
+      <span>Float over camera apps</span>
+      <span>Apple Watch and web remote</span>
+      <span>Built for creator workflows</span>
     </div>
   </div>
   <div class="hero-stage">
     <div class="device-cluster">
       <div class="device-frame prompter-device">
-        <div class="device-label">PROMPTER DEVICE</div>
-        <div class="device-screen script-screen">
-          <div class="script-line script-line-active"></div>
-          <div class="script-line"></div>
-          <div class="script-line"></div>
-          <div class="script-line script-line-short"></div>
-          <div class="script-controls">
-            <span class="dot"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
+        <div class="device-label">CAMERA APP</div>
+        <div class="device-screen camera-screen">
+          <div class="camera-preview">
+            <span class="camera-dot"></span>
+            <span class="lens-ring"></span>
+            <div class="floating-script-card">
+              <span>Floating script</span>
+              <strong>Stay calm, keep eye contact, and deliver the next line naturally.</strong>
+              <div class="script-progress"><i></i></div>
+            </div>
+            <div class="app-dock">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
           </div>
         </div>
       </div>
@@ -57,12 +63,12 @@ import { primaryActions } from "../data/site";
     </div>
     <div class="hero-panel">
       <div>
-        <strong>Web remote</strong>
-        <p>Use another phone to handle playback without touching the main screen.</p>
+        <strong>Float while recording</strong>
+        <p>Keep the script visible while the app you record in stays front and center.</p>
       </div>
       <div>
-        <strong>Cleaner delivery</strong>
-        <p>Keep eye-line steadier and avoid breaking your shot to change speed or position.</p>
+        <strong>Remote when needed</strong>
+        <p>Use another device to adjust speed when your main screen should stay untouched.</p>
       </div>
     </div>
   </div>

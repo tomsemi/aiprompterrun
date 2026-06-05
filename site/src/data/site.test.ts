@@ -6,8 +6,8 @@ describe("site data", () => {
     expect(primaryActions.download.href).toBe("https://apps.apple.com/app/id1561831359");
   });
 
-  it("keeps the remote CTA pointed at the existing remote domain", () => {
-    expect(primaryActions.remote.href).toBe("https://remote.aiprompter.run/");
+  it("points the remote CTA at the ChatUtil remote domain", () => {
+    expect(primaryActions.remote.href).toBe("https://remote.chatutil.top/");
   });
 
   it("exposes a room-code setup explanation in the how-it-works steps", () => {

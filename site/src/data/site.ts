@@ -5,52 +5,57 @@ export const primaryActions = {
   },
   remote: {
     label: "Open Web Remote",
-    href: "https://remote.aiprompter.run/",
+    href: "https://remote.chatutil.top/",
   },
 } as const;
 
-export const siteUrl = "https://aiprompter.run";
+export const siteUrl = "https://teleprompter.chatutil.top";
 
 export const meta = {
   home: {
-    title: "AIPrompter, a teleprompter app with web remote control",
+    title: "Teleprompter-float above apps, a floating teleprompter for iPhone",
     description:
-      "Use AIPrompter to read scripts smoothly and control your teleprompter from another phone with a simple room code.",
+      "Use AIPrompter to keep scripts floating above camera apps, video calls, livestream tools, and recording workflows.",
     path: "/",
   },
   faq: {
-    title: "AIPrompter FAQ, setup, room code, and web remote help",
+    title: "AIPrompter FAQ, floating teleprompter setup, and web remote help",
     description:
-      "Learn how AIPrompter works, how the room code setup works, and when to use the web remote during recording.",
+      "Learn how floating teleprompter mode works, how room-code remote control works, and how to set up cleaner recording sessions.",
     path: "/faq",
   },
 } as const;
 
 export const steps = [
   {
-    title: "Open AIPrompter on your recording device",
-    body: "Start your script on the main phone or iPad you use as the prompter.",
+    title: "Write or paste your script",
+    body: "Prepare the words you want to read before recording, livestreaming, teaching, or presenting.",
   },
   {
-    title: "Get the room code from the prompter",
-    body: "The app shows a room code that links the prompter to a separate controller device.",
+    title: "Float it above your recording app",
+    body: "Start floating mode so the script stays visible while you use your camera, video, or meeting app.",
   },
   {
     title: "Enter the room code on web remote",
-    body: "Open the web remote on another phone and control play, speed, and position without touching the prompter.",
+    body: "Optionally use another phone, tablet, or watch to control play, speed, and position without touching the recording device.",
   },
 ] as const;
 
 export const faqItems = [
   {
+    question: "What does floating above apps mean?",
+    answer:
+      "AIPrompter is designed to keep your script visible while you work in another recording app, so you can read without switching away from the camera or meeting screen.",
+  },
+  {
     question: "How does the web remote work?",
     answer:
-      "Open the remote page on a second device, enter the room code from the prompter, and use the controls to manage playback remotely.",
+      "Open the remote page on a second device, enter the room code from the prompter, and use the controls to manage playback, speed, and position remotely.",
   },
   {
     question: "Do I need two devices?",
     answer:
-      "The remote experience works best with a second phone, but the app itself is still the main teleprompter experience.",
+      "No. Floating teleprompter mode is the core app experience. A second device is useful when you want remote control during a more polished setup.",
   },
   {
     question: "What is the room code?",
@@ -60,6 +65,6 @@ export const faqItems = [
   {
     question: "Can I use it while recording?",
     answer:
-      "Yes. The remote flow is designed to help you adjust scrolling without touching the device that is being used for reading or recording.",
+      "Yes. The app is built for recording workflows where you need the script visible while your camera, livestream, or meeting app stays active.",
   },
 ] as const;

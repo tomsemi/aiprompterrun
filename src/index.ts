@@ -72,10 +72,10 @@ export class RoomDurableObject extends DurableObject {
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
-    const redirect = redirectWwwHost(url);
+    const redirect = redirectCanonicalUrl(url);
 
     if (redirect) {
-      return Response.redirect(redirect, 301);
+      return Response.redirect(redirect, 308);
     }
 
     const remoteHost = isRemoteHost(url);
@@ -112,17 +112,28 @@ export default {
 };
 
 function isRemoteHost(url: URL) {
-  return url.hostname === "remote.aiprompter.run" || url.hostname.startsWith("remote.");
+  return (
+    url.hostname === "remote.aiprompter.run" ||
+    url.hostname === "remote.chatutil.top" ||
+    url.hostname.startsWith("remote.")
+  );
 }
 
-function redirectWwwHost(url: URL) {
-  if (url.hostname !== "www.aiprompter.run") {
-    return null;
+function redirectCanonicalUrl(url: URL) {
+  const target = new URL(url);
+  let changed = false;
+
+  if (target.protocol === "http:") {
+    target.protocol = "https:";
+    changed = true;
   }
 
-  const target = new URL(url);
-  target.hostname = "aiprompter.run";
-  return target.toString();
+  if (target.hostname === "www.aiprompter.run") {
+    target.hostname = "aiprompter.run";
+    changed = true;
+  }
+
+  return changed ? target.toString() : null;
 }
 
 function corsHeaders() {

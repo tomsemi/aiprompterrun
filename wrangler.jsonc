@@ -7,6 +7,13 @@
     "binding": "ASSETS",
     "run_worker_first": true
   },
+  "routes": [
+    { "pattern": "aiprompter.run", "custom_domain": true },
+    { "pattern": "www.aiprompter.run", "custom_domain": true },
+    { "pattern": "remote.aiprompter.run", "custom_domain": true },
+    { "pattern": "teleprompter.chatutil.top", "custom_domain": true },
+    { "pattern": "remote.chatutil.top", "custom_domain": true }
+  ],
   "durable_objects": {
     "bindings": [
       {
