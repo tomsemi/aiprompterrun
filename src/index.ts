@@ -351,6 +351,22 @@ function generateControlPageHTML() {
             font-size: 27px;
         }
 
+        .btn .play-pause-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+        }
+
+        .play-pause-icon .play-glyph {
+            font-size: 29px;
+        }
+
+        .play-pause-icon .pause-glyph {
+            margin-left: -2px;
+            font-size: 25px;
+        }
+
         .floating-actions {
             position: fixed;
             right: calc(env(safe-area-inset-right) + 18px);
@@ -558,7 +574,10 @@ function generateControlPageHTML() {
                 <span class="glyph glyph-small">&#9664;&#9664;</span>
             </button>
             <button class="btn" id="pauseButton" type="button" aria-label="Play or pause">
-                <span class="glyph">&#9654;</span>
+                <span class="glyph play-pause-icon" aria-hidden="true">
+                    <span class="play-glyph">&#9654;</span>
+                    <span class="pause-glyph">&#8545;</span>
+                </span>
             </button>
             <button class="btn" id="forwardButton" type="button" aria-label="Forward">
                 <span class="glyph glyph-small">&#9654;&#9654;</span>
