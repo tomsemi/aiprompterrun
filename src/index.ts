@@ -161,7 +161,11 @@ function generateControlPageHTML() {
             --page-bg: rgb(40, 54, 92);
             --control-blue: rgb(91, 145, 245);
             --control-blue-active: rgb(75, 115, 199);
-            --control-button-size: 80px;
+            --control-button-size: clamp(80px, 24vw, 100px);
+            --control-icon-size: clamp(28px, 8vw, 38px);
+            --control-small-icon-size: clamp(27px, 7vw, 34px);
+            --play-glyph-size: clamp(29px, 7.5vw, 34px);
+            --pause-glyph-size: clamp(25px, 6.5vw, 30px);
             --bottom-action-height: 58px;
         }
 
@@ -284,7 +288,7 @@ function generateControlPageHTML() {
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: clamp(16px, 4vmin, 26px);
+            gap: clamp(20px, 6vmin, 30px);
             padding: max(82px, calc(env(safe-area-inset-top) + 64px)) 12px max(100px, calc(env(safe-area-inset-bottom) + 88px));
         }
 
@@ -314,7 +318,7 @@ function generateControlPageHTML() {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: clamp(14px, 4vw, 22px);
+            gap: clamp(12px, 4vw, 22px);
         }
 
         .btn {
@@ -322,6 +326,9 @@ function generateControlPageHTML() {
             height: var(--control-button-size);
             margin: 0;
             padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             border-radius: 20px;
             background-color: var(--control-blue);
             color: white;
@@ -342,13 +349,13 @@ function generateControlPageHTML() {
 
         .btn .glyph {
             display: block;
-            font-size: 31px;
+            font-size: var(--control-icon-size);
             font-weight: 700;
             line-height: 1;
         }
 
         .btn .glyph-small {
-            font-size: 27px;
+            font-size: var(--control-small-icon-size);
         }
 
         .btn .play-pause-icon {
@@ -359,12 +366,12 @@ function generateControlPageHTML() {
         }
 
         .play-pause-icon .play-glyph {
-            font-size: 29px;
+            font-size: var(--play-glyph-size);
         }
 
         .play-pause-icon .pause-glyph {
             margin-left: -2px;
-            font-size: 25px;
+            font-size: var(--pause-glyph-size);
         }
 
         .floating-actions {
@@ -513,9 +520,9 @@ function generateControlPageHTML() {
             transform: translateX(-50%) translateY(0);
         }
 
-        @media (max-width: 350px), (max-height: 500px) and (orientation: landscape) {
+        @media (max-width: 350px) {
             :root {
-                --control-button-size: 72px;
+                --control-button-size: clamp(76px, 24vw, 82px);
                 --bottom-action-height: 52px;
             }
 
@@ -533,12 +540,50 @@ function generateControlPageHTML() {
             }
 
             #controls {
-                gap: 12px;
+                gap: 20px;
                 padding: max(56px, calc(env(safe-area-inset-top) + 38px)) 10px max(72px, calc(env(safe-area-inset-bottom) + 62px));
             }
 
             .button-row {
                 gap: 10px;
+            }
+        }
+
+        @media (max-height: 430px), (orientation: landscape) and (max-height: 520px) {
+            :root {
+                --control-button-size: clamp(68px, 21vh, 88px);
+                --control-icon-size: clamp(26px, 8vh, 34px);
+                --control-small-icon-size: clamp(25px, 7vh, 31px);
+                --play-glyph-size: clamp(27px, 7.5vh, 31px);
+                --pause-glyph-size: clamp(23px, 6.5vh, 28px);
+            }
+
+            #controls {
+                gap: 16px;
+                padding: max(56px, calc(env(safe-area-inset-top) + 38px)) 10px max(72px, calc(env(safe-area-inset-bottom) + 62px));
+            }
+
+            .button-row {
+                gap: 12px;
+            }
+        }
+
+        @media (max-height: 500px) and (orientation: landscape) {
+            :root {
+                --bottom-action-height: 52px;
+            }
+
+            #floatButton {
+                width: 88px;
+                font-size: 14px;
+            }
+
+            #floatPanelToggle {
+                width: 42px;
+            }
+
+            #floatPanel {
+                width: min(260px, calc(100vw - 24px));
             }
         }
     </style>
