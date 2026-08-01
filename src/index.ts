@@ -607,7 +607,7 @@ function generateControlPageHTML() {
 
         <div class="button-row">
             <button class="btn" id="resetButton" type="button" aria-label="Reset">
-                <span class="glyph">&#8635;</span>
+                <span class="glyph">&#10227;</span>
             </button>
             <button class="btn" id="scaleButton" type="button" aria-label="Scale">
                 <span class="glyph">&#9974;</span>
